@@ -1,0 +1,24 @@
+extends ../layout
+
+block content
+    h1 Books
+    p
+        a(href='/books/add',class='button') Create New Book
+    p   Filters
+        a(href='/books') All |
+        a(href='/books/overdue') Overdue |
+        a(href='books/checked') Checked Out
+    table
+        thead
+            tr
+                th Title
+                th Author
+                th Genre
+                th Year Released
+        tbody
+            tr
+                td
+                    a(href='book/:id') Harry Potter and the Philosopher's Stone
+                td J.K. Rowling
+                td Fantasy
+                td 1997
