@@ -1,3 +1,36 @@
-//
-   Created by ash_skywalker10 on 26/1/17.
+extend ../layout
+
+block content
+    h1= title
+
+    include ../misc/errors
+
+    form(action="/books/" + book.id + "?_method=PUT",method="post")
+        include form
+        p
+            input(type="submit",value="Update")
+
+    h2= 'Loan History'
+    table
+        thead
+            tr
+                th Book
+                th Patron
+                th Loaned on
+                th Return by
+                th Returned on
+                th Action
+        tbody
+            each loan in loans
+                tr
+                    td
+                        a(href='' + loan.book_id)= book.title
+                    td
+                        a(href='/patrons/' + loan.patron_id)= loan.Patron.first_name + ' ' + loan.Patron.last_name
+                    td= loan.loaned_on
+                    td= loan.return_by
+                    td= loan.returned_on
+                    td
+                        if(loan.returned_on == null)
+                            a(href='/loans/return/' + loan.id)= 'Return Book'
 

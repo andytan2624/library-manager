@@ -1,0 +1,11 @@
+extend ../layout
+
+block content
+    h1= title
+
+    include ../misc/errors
+
+    form(action="/patrons",method="post")
+        include form
+        p
+            input(type="submit",value="Create New Patron")

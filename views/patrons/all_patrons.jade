@@ -1,3 +1,23 @@
-//
-   Created by ash_skywalker10 on 26/1/17.
+extends ../layout
 
+block content
+    h1 Patrons
+    p
+        a(href='/patrons/add',class='button') Create New Patron
+    table
+        thead
+            tr
+                th Name
+                th Address
+                th Email
+                th Library ID
+                th Zip
+        tbody
+            each patron in patrons
+                tr
+                    td
+                        a(href='patrons/' + patron.id)= patron.first_name + ' ' + patron.last_name
+                    td= patron.address
+                    td= patron.email
+                    td= patron.library_id
+                    td= patron.zip_code
