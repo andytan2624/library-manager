@@ -77,19 +77,27 @@ router.post("/:id", function(req, res, next){
         } else {
             res.sendStatus(400);
         }
+    }).then(function(book){
+        res.redirect("/books/" + book.id);
     }).catch(function(err){
         if(err.name === "SequelizeValidationError") {
-            res.render("books/book_detail", {
-                book: book,
-                loans: book.Loans,
-                title: "Book: " + book.title,
-                errors: err.errors
+            Book.findById(req.params.id, {include: [{model: Loan, required: false, include: [{model: Patron}]}]}).then(function(bookDetails){
+                if (bookDetails) {
+                    res.render("books/book_detail",
+                        {
+                            book: bookDetails,
+                            loans: bookDetails.Loans,
+                            title: 'Book: ' + bookDetails.title,
+                            errors: err.errors
+                        }
+                    )
+                } else {
+                    res.sendStatus(400);
+                }
             });
         } else {
             throw err;
         }
-    }).then(function(book){
-        res.redirect("/books/" + book.id);
     });
 
 });

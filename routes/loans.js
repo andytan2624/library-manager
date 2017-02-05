@@ -83,11 +83,45 @@ router.post('/', function(req, res, next) {
 
 // Get return a book
 router.get('/return/:id', function(req, res, next) {
-    Loan.findById(req.params.id).then(function(loan) {
-        return loan.update({returned_on: moment().format('YYYY-MM-DD')});
+    Loan.findById(req.params.id, {include: [{model: Book}, {model: Patron}]}).then(function(loanDetails) {
+        loanDetails.returned_on = moment().format('YYYY-MM-DD');
+        res.render("loans/return", {
+            loan: loanDetails,
+            book: loanDetails.Book,
+            patron: loanDetails.Patron,
+            title: 'Patron: Return Book'
+        });
+        //return loan.update({returned_on: moment().format('YYYY-MM-DD')});
     }).catch(function(err){
        res.sendStatus(500);
-    }).then(function(loan){
-        res.redirect("/loans");
     });
 });
+
+// POST return a book
+router.post('/return/:id', function(req, res, next) {
+    Loan.findById(req.params.id).then(function(loan) {
+        loan.update(req.body);
+    }).then(function(loan){
+        res.redirect("/loans");
+    }).catch(function(err){
+        if (err.name === "SequelizeValidationError") {
+            Loan.findById(req.params.id, {include: [{model: Book}, {model: Patron}]}).then(function(loanDetails) {
+                if (loanDetails) {
+                    loanDetails.returned_on = moment().format('YYYY-MM-DD');
+                    res.render("loans/return", {
+                        loan: loanDetails,
+                        book: loanDetails.Book,
+                        patron: loanDetails.Patron,
+                        title: 'Patron: Return Book'
+                    });
+                } else {
+                    res.sendStatus(400);
+                }
+            });
+        }
+    }).catch(function(err){
+        res.sendStatus(500);
+    });
+});
+
+

@@ -61,11 +61,18 @@ router.post("/:id", function(req, res, next){
         }
     }).catch(function(err){
         if(err.name === "SequelizeValidationError") {
-            res.render("patrons/patron_detail", {
-                patron : patron,
-                loans: patron.Loans,
-                title: "Patron: " + patron.first_name + ' ' + patron.last_name,
-                errors: err.errors
+            Patron.findById(req.params.id, {include: [{model: Loan, required: false, include: [{model: Book}]}]}).then(function(patronDetails){
+                if (patronDetails) {
+                        res.render("patrons/patron_detail", {
+                            patron: Patron.build(req.body),
+                            loans: patronDetails.Loans,
+                            title: 'Patron: ' + patronDetails.first_name + ' ' + patronDetails.last_name,
+                            errors: err.errors
+                        }
+                    )
+                } else {
+                    res.sendStatus(400);
+                }
             });
         } else {
             throw err;

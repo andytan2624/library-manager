@@ -5,7 +5,7 @@ block content
 
     include ../misc/errors
 
-    form(action="/books/" + book.id + "?_method=PUT",method="post")
+    form(action="/books/" + book.id,method="post")
         include form
         p
             input(type="submit",value="Update")
